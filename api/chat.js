@@ -1,11 +1,15 @@
 export default async function handler(req, res) {
-  if (req.method!== 'POST') return res.status(405).end();
+  if (req.method!== 'POST') return res.status(405).json({error: 'Method not allowed'});
 
   try {
-    const { prompt } = req.body;
-    if (!prompt) return res.status(400).json({ error: "Prompt kosong" });
+    // Vercel kadang perlu ini biar body kebaca
+    const body = typeof req.body === 'string'? JSON.parse(req.body) : req.body;
+    const { prompt } = body;
 
-    const apiKey = process.env.VITE_GROQ_API_KEY; // di backend jangan pake VITE_
+    if (!prompt) return res.status(400).json({error: 'Prompt kosong'});
+
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) return res.status(500).json({error: 'GROQ_API_KEY tidak ditemukan di Vercel'});
 
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -20,9 +24,11 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
+    if (!response.ok) return res.status(500).json({error: data.error?.message || 'Groq error'});
+
     res.status(200).json({ reply: data.choices[0].message.content });
 
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
+  }
