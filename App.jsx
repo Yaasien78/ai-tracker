@@ -1,50 +1,43 @@
-import { useState } from "react";
-import { sendMessageToGroq } from "./services/aiService";
+import React, { useState } from 'react';
+import { askAI } from './aiService';
 
-export default function App() {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
+function App() {
+  const [input, setInput] = useState('');
+  const [chat, setChat] = useState([]);
 
   const handleSend = async () => {
-    if (!input.trim()) return;
-    const userMsg = { role: "user", content: input };
-    const newMessages = [...messages, userMsg];
-    setMessages(newMessages);
-    setInput("");
-
-    const aiReply = await sendMessageToGroq(newMessages);
-    const aiMsg = { role: "assistant", content: aiReply };
-    setMessages([...newMessages, aiMsg]);
+    if (!input) return;
+    const userMsg = { role: 'user', text: input };
+    setChat([...chat, userMsg]);
+    setInput('');
+    
+    const aiReply = await askAI(input);
+    setChat(prev => [...prev, { role: 'ai', text: aiReply }]);
   };
 
   return (
-    <div className="flex flex-col h-screen bg-black text-white">
-      <div className="flex items-center justify-between p-4 border-b border-gray-800">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{backgroundColor: '#007BFF'}}></div>
-          <h1 className="text-xl font-bold">AI Tracker</h1>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#0a0a0a' }}>
+      <div style={{ width: '90%', maxWidth: '500px', background: '#007BFF', borderRadius: '12px', padding: '20px', color: 'white' }}>
+        <h2 style={{ textAlign: 'center', marginBottom: '15px' }}>AI Tracker</h2>
+        
+        <div style={{ height: '300px', overflowY: 'auto', background: '#001f3f', padding: '10px', borderRadius: '8px', marginBottom: '10px' }}>
+          {chat.map((msg, i) => (
+            <p key={i} style={{ textAlign: msg.role === 'user' ? 'right' : 'left' }}>{msg.text}</p>
+          ))}
         </div>
-      </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((msg, i) => (
-          <div key={i} className={`flex ${msg.role === "user"? "justify-end" : "justify-start"}`}>
-            <div className={`max-w-[80%] p-3 rounded-2xl ${msg.role === "user"? "text-white rounded-br-none" : "bg-[#1F1F1F] text-gray-300 rounded-bl-none"}`}
-              style={{ backgroundColor: msg.role === "user"? '#007BFF' : '' }}>
-              {msg.content}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="p-4 border-t border-gray-800">
-        <div className="flex items-center gap-2 bg-[#1F1F1F] rounded-full px-4 py-2">
-          <button>📎</button>
-          <input value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSend()} placeholder="Tulis pesan..." className="flex-1 bg-transparent outline-none" />
-          <button>🎤</button>
-          <button onClick={handleSend} className="p-2 rounded-full" style={{ backgroundColor: '#007BFF' }}>⬆️</button>
-        </div>
+        <input 
+          value={input} 
+          onChange={(e) => setInput(e.target.value)} 
+          placeholder="Ketik pesan..." 
+          style={{ width: '70%', padding: '10px', borderRadius: '8px', border: 'none' }} 
+        />
+        <button onClick={handleSend} style={{ width: '25%', padding: '10px', marginLeft: '5%', background: 'white', color: '#007BFF', border: 'none', borderRadius: '8px', fontWeight: 'bold' }}>
+          Kirim
+        </button>
       </div>
     </div>
-  )
-  }
+  );
+}
+
+export default App;
