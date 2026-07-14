@@ -2,8 +2,8 @@ export async function askAI(prompt) {
   const res = await fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt })
+    body: JSON.stringify({ prompt }) // ini wajib ada
   });
   const data = await res.json();
-  return data.reply;
+  return data.reply || "AI error: " + data.error;
 }
