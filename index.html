@@ -21,11 +21,12 @@ header button{background:transparent;border:none;font-size:18px;cursor:pointer;c
 .welcome-icon span{font-size:26px}
 .welcome h2{font-size:18px;margin-bottom:6px;font-weight:600}
 .welcome p{color:#888;font-size:12.5px;line-height:1.4;margin-bottom:20px}
-.suggest-wrap{width:100%;max-width:400px}
+.suggest-wrap{width:100%}
 .suggest{width:100%;padding:12px;margin:6px 0;background:#1a1a1a;border:1px solid #262626;border-radius:10px;color:#fff;cursor:pointer;font-size:13.5px;text-align:center}
 
 main{flex:1;overflow-y:auto;padding:8px 12px}
 .chat-row{display:flex;gap:6px;margin:10px 0;align-items:flex-start}
+.chat-row.user{justify-content:flex-end}
 .avatar{width:26px;height:26px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 .avatar.ai{background:#f97316}
 .bubble-wrap{display:flex;flex-direction:column;max-width:78%}
@@ -34,11 +35,11 @@ main{flex:1;overflow-y:auto;padding:8px 12px}
 .bubble.ai{background:#1a1a1a;color:#e5e5e5;border:1px solid #262626;border-bottom-left-radius:4px}
 .bubble-name{font-size:10.5px;color:#777;margin:0 2px 3px 2px}
 
-footer{display:flex;padding:8px 10px;border-top:1px solid #1a1a1a;gap:6px;align-items:center;background:#000;flex-shrink:0}
-footer input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid #262626;background:#111;color:#fff;font-size:13.5px}
-footer button{padding:9px;border:none;border-radius:10px;background:#111;color:#aaa;cursor:pointer;font-size:18px;flex-shrink:0}
+footer{display:flex;padding:8px 10px;border-top:1px solid #1a1a1a;gap:5px;align-items:center;background:#000;flex-shrink:0}
+.footer-btn{padding:9px 8px;border:none;border-radius:10px;background:#111;color:#aaa;cursor:pointer;font-size:18px;flex-shrink:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center}
+footer input{flex:1;min-width:0;padding:10px 12px;border-radius:10px;border:1px solid #262626;background:#111;color:#fff;font-size:13.5px}
+#sendBtn{background:#2563eb;color:#fff;width:40px;height:40px}
 footer button.recording{background:#22c55e!important;color:#fff}
-#sendBtn{background:#2563eb;padding:9px 12px;color:#fff;border-radius:10px}
 </style>
 </head>
 <body>
@@ -66,10 +67,10 @@ footer button.recording{background:#22c55e!important;color:#fff}
   </div>
 
   <footer>
-    <button id="galleryBtn">🖼️</button>
+    <button id="galleryBtn" class="footer-btn">🖼️</button>
     <input type="text" id="promptInput" placeholder="Message AI Tracker">
-    <button id="micBtn">🎤</button>
-    <button id="sendBtn">➤</button>
+    <button id="micBtn" class="footer-btn">🎤</button>
+    <button id="sendBtn" class="footer-btn">➤</button>
   </footer>
 </div>
 
@@ -95,7 +96,7 @@ function speak(text) {
 function addMessage(text, sender) {
   if(chatArea.classList.contains('welcome')) {
     chatArea.classList.remove('welcome');
-    chatArea.classList.add('main');
+    chatArea.id = 'chatArea';
     chatArea.innerHTML = '';
   }
   const row = document.createElement('div');
