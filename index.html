@@ -9,7 +9,7 @@
 html,body{height:100%;background:#000;color:#fff;overflow:hidden}
 .app{width:100%;height:100%;display:flex;flex-direction:column}
 
-header{padding:10px 12px;display:flex;align-items:center;border-bottom:1px solid #1a1a1a;justify-content:space-between;background:#000;flex-shrink:0;position:sticky;top:0;z-index:10} /* FIX HEADER */
+header{padding:10px 12px;display:flex;align-items:center;border-bottom:1px solid #1a1a1a;justify-content:space-between;background:#000;flex-shrink:0;position:sticky;top:0;z-index:10}
 .header-left{display:flex;align-items:center;gap:6px}
 .dot{width:8px;height:8px;background:#3b82f6;border-radius:50%}
 header h1{font-size:15px;font-weight:600}
@@ -24,23 +24,29 @@ header button{background:transparent;border:none;font-size:18px;cursor:pointer;c
 .suggest-wrap{width:100%}
 .suggest{width:100%;padding:12px;margin:6px 0;background:#1a1a1a;border:1px solid #262626;border-radius:10px;color:#fff;cursor:pointer;font-size:13.5px;text-align:center}
 
-main{flex:1;overflow-y:auto;padding:8px 12px} /* FIX SCROLL */
+main{flex:1;overflow-y:auto;padding:8px 12px}
 .chat-row{display:flex;gap:6px;margin:10px 0;align-items:flex-start}
 .chat-row.user{justify-content:flex-end}
 .avatar{width:26px;height:26px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 .avatar.ai{background:#f97316}
 .bubble-wrap{display:flex;flex-direction:column;max-width:78%}
-.bubble{padding:9px 12px;border-radius:14px;line-height:1.4;font-size:13.5px}
+.bubble{padding:9px 12px;border-radius:14px;line-height:1.4;font-size:13.5px;cursor:pointer;user-select:none}
 .bubble.user{background:#2563eb;color:#fff;border-bottom-right-radius:4px}
 .bubble.ai{background:#1a1a1a;color:#e5e5e5;border:1px solid #262626;border-bottom-left-radius:4px}
+.bubble img{max-width:100%;border-radius:10px;margin-top:6px}
 .bubble-name{font-size:10.5px;color:#777;margin:0 2px 3px 2px}
 
-footer{display:flex;padding:8px 10px;border-top:1px solid #1a1a1a;gap:5px;align-items:center;background:#000;flex-shrink:0;position:sticky;bottom:0;z-index:10} /* FIX FOOTER */
+footer{display:flex;padding:8px 10px;border-top:1px solid #1a1a1a;gap:5px;align-items:center;background:#000;flex-shrink:0;position:sticky;bottom:0;z-index:10}
 .footer-btn{padding:9px 8px;border:none;border-radius:10px;background:#111;color:#aaa;cursor:pointer;font-size:18px;flex-shrink:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center}
 footer input{flex:1;min-width:0;padding:10px 12px;border-radius:10px;border:1px solid #262626;background:#111;color:#fff;font-size:13.5px}
 #sendBtn{background:#2563eb;color:#fff;width:40px;height:40px}
 footer button.recording{background:#22c55e!important;color:#fff}
 .toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;z-index:99;display:none}
+
+/* MENU POPUP CHAT */
+.chat-menu{position:absolute;background:#222;border:1px solid #333;border-radius:8px;padding:4px 0;z-index:20;display:none}
+.chat-menu button{width:100%;padding:8px 14px;background:transparent;border:none;color:#fff;text-align:left;font-size:13px;cursor:pointer}
+.chat-menu button:hover{background:#333}
 </style>
 </head>
 <body>
@@ -51,9 +57,7 @@ footer button.recording{background:#22c55e!important;color:#fff}
       <h1>AI Tracker</h1>
     </div>
     <div class="icons">
-      <button id="downloadBtn" title="Download Chat">⬇️</button> <!-- TOMBOL DOWNLOAD BARU -->
-      <button id="muteBtn">🔊</button>
-      <button id="clearBtn">🗑️</button>
+      <button id="muteBtn">🔊</button> <!-- CUMA ADA MUTE -->
     </div>
   </header>
 
@@ -76,21 +80,25 @@ footer button.recording{background:#22c55e!important;color:#fff}
     <button id="micBtn" class="footer-btn">🎤</button>
     <button id="sendBtn" class="footer-btn">➤</button>
   </footer>
-  <div id="toast" class="toast">Chat berhasil di download!</div>
+  <div id="toast" class="toast">Teks disalin!</div>
+  <div id="chatMenu" class="chat-menu">
+    <button id="copyBtn">📋 Salin</button>
+    <button id="deleteBtn">🗑️ Hapus</button>
+  </div>
 </div>
 
 <script>
 const chatArea = document.getElementById('chatArea');
 const promptInput = document.getElementById('promptInput');
 const sendBtn = document.getElementById('sendBtn');
-const clearBtn = document.getElementById('clearBtn');
 const muteBtn = document.getElementById('muteBtn');
 const micBtn = document.getElementById('micBtn');
 const galleryBtn = document.getElementById('galleryBtn');
-const downloadBtn = document.getElementById('downloadBtn');
 const toast = document.getElementById('toast');
+const chatMenu = document.getElementById('chatMenu');
 let muted = false;
 let chatHistory = [];
+let selectedBubble = null;
 
 function showToast(msg){
   toast.textContent = msg;
@@ -101,12 +109,12 @@ function showToast(msg){
 function speak(text) {
   if(muted) return;
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'id-ID'; // ganti ke bahasa indo biar pas
+  utterance.lang = 'id-ID';
   speechSynthesis.cancel();
   speechSynthesis.speak(utterance);
 }
 
-function addMessage(text, sender) {
+function addMessage(text, sender, isImage=false) {
   if(chatArea.querySelector('.welcome')) chatArea.innerHTML = '';
   const row = document.createElement('div');
   row.className = `chat-row ${sender}`;
@@ -120,12 +128,28 @@ function addMessage(text, sender) {
   name.textContent = sender==='user'? 'You' : 'AI Tracker';
   const bubble = document.createElement('div');
   bubble.className = `bubble ${sender}`;
-  bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+
+  if(isImage){
+    const img = document.createElement('img');
+    img.src = text;
+    bubble.appendChild(img);
+  } else {
+    bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+  }
+
+  // KLIK BUBBLE UNTUK MENU
+  bubble.onclick = (e) => {
+    selectedBubble = row;
+    chatMenu.style.display = 'block';
+    chatMenu.style.left = e.pageX + 'px';
+    chatMenu.style.top = e.pageY + 'px';
+  }
+
   bubbleWrap.append(name,bubble);
   if(sender==='user') row.append(bubbleWrap, avatar); else row.append(avatar, bubbleWrap);
   chatArea.appendChild(row);
-  chatArea.scrollTop = chatArea.scrollHeight; // auto scroll ke bawah
-  chatHistory.push({sender, text});
+  chatArea.scrollTop = chatArea.scrollHeight;
+  chatHistory.push({sender, text, isImage});
   if(sender==='ai' && text!=='Thinking...') speak(text);
 }
 
@@ -145,41 +169,61 @@ async function sendMessage() {
   }
 }
 
-// DOWNLOAD CHAT
-downloadBtn.onclick = () => {
-  if(chatHistory.length === 0) return alert('Belum ada chat untuk di download');
-  let content = chatHistory.map(m => `${m.sender === 'user'? 'You' : 'AI Tracker'}: ${m.text}`).join('\n\n');
-  const blob = new Blob([content], {type: 'text/plain'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `AI-Tracker-Chat-${new Date().toLocaleDateString()}.txt`;
-  a.click();
-  URL.revokeObjectURL(url);
-  showToast('Chat berhasil di download!');
+// UPLOAD GAMBAR
+galleryBtn.onclick = () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if(file){
+      const reader = new FileReader();
+      reader.onload = () => {
+        addMessage(reader.result, 'user', true);
+      }
+      reader.readAsDataURL(file);
+    }
+  }
+  input.click();
 }
+
+// MENU CHAT
+document.getElementById('copyBtn').onclick = () => {
+  if(selectedBubble){
+    const text = selectedBubble.querySelector('.bubble').innerText;
+    navigator.clipboard.writeText(text);
+    showToast('Teks disalin!');
+    chatMenu.style.display = 'none';
+  }
+}
+document.getElementById('deleteBtn').onclick = () => {
+  if(selectedBubble){
+    selectedBubble.remove();
+    showToast('Pesan dihapus');
+    chatMenu.style.display = 'none';
+  }
+}
+document.onclick = (e) => { if(!chatMenu.contains(e.target)) chatMenu.style.display = 'none' }
 
 sendBtn.onclick = sendMessage;
 promptInput.onkeypress = e => { if(e.key==='Enter') sendMessage() };
 document.querySelectorAll('.suggest').forEach(btn=>{btn.onclick = () => { promptInput.value = btn.textContent; sendMessage(); }});
-clearBtn.onclick = () => { chatHistory = []; speechSynthesis.cancel(); location.reload(); };
 muteBtn.onclick = () => {muted =!muted;muteBtn.textContent = muted? '🔇' : '🔊';if(muted) speechSynthesis.cancel();}
 
-// MIC FIX: langsung kirim setelah selesai ngomong
+// MIC
 micBtn.onclick = () => {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SpeechRecognition) return alert('Browser tidak support voice');
   const rec = new SpeechRecognition();
-  rec.lang = 'id-ID'; // biar bisa bahasa indo
+  rec.lang = 'id-ID';
   rec.onstart = () => micBtn.classList.add('recording');
   rec.onend = () => micBtn.classList.remove('recording');
   rec.onresult = e => {
     promptInput.value = e.results[0][0].transcript;
-    sendMessage(); // LANGSUNG KIRIM
+    sendMessage();
   }
   rec.start();
 }
-galleryBtn.onclick = () => {const input = document.createElement('input');input.type = 'file'; input.accept = 'image/*'; input.click();}
 </script>
 </body>
-    </html>
+</html>
