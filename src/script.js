@@ -19,14 +19,13 @@ clearBtn.addEventListener('click', () => {
     <button class="suggest">Creating Gardens and Buildings</button>
     <button class="suggest">Repairing machines and making machines</button>
   </div>`;
-  attachSuggestListeners();
+  attachSuggestListeners(); // <-- ini penting biar tombol hidup lagi
 });
 
 async function sendMessage() {
   const prompt = promptInput.value.trim();
   if (!prompt) return;
 
-  // hapus welcome screen kalau ada
   if (chatArea.querySelector('.welcome')) chatArea.innerHTML = '';
 
   addMessage(prompt, 'user');
@@ -40,7 +39,6 @@ async function sendMessage() {
       body: JSON.stringify({ prompt })
     });
     const data = await res.json();
-
     removeLoading();
     addMessage(data.reply || "Gagal dapat jawaban", 'ai');
   } catch (err) {
@@ -67,18 +65,19 @@ function attachSuggestListeners() {
   document.querySelectorAll('.suggest').forEach(btn => {
     btn.onclick = () => {
       promptInput.value = btn.innerText;
-      sendMessage();
+      sendMessage(); // langsung kirim
     }
   });
 }
+
+// Panggil pertama kali pas load
 attachSuggestListeners();
 
-// FITUR MICROPHONE - SPEECH TO TEXT
+// FITUR MICROPHONE
 if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = new SpeechRecognition();
-  recognition.lang = 'id-ID'; // 'en-US' kalau mau bahasa inggris
-  recognition.continuous = false;
+  recognition.lang = 'id-ID';
 
   micBtn.addEventListener('click', () => {
     micBtn.style.background = '#3b82f6';
@@ -86,18 +85,13 @@ if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
   });
 
   recognition.onresult = (event) => {
-    const speechText = event.results[0][0].transcript;
-    promptInput.value = speechText;
+    promptInput.value = event.results[0][0].transcript;
     sendMessage();
   };
 
   recognition.onend = () => {
     micBtn.style.background = '#1a1a1a';
   };
-
-  recognition.onerror = () => {
-    micBtn.style.background = '#1a1a1a';
-  };
 } else {
   micBtn.style.display = 'none';
-      }
+                             }
