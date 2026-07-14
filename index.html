@@ -1,42 +1,30 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Tracker</title>
-  <link rel="stylesheet" href="./src/style.css">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Tracker</title>
+<link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
-  <div class="app">
-    <header>
-      <div class="status"></div>
-      <h1>AI Tracker</h1>
-      <div class="icons">
-        <button id="muteBtn">🔇</button>
-        <button id="clearBtn">🗑️</button>
-      </div>
-    </header>
-
-    <main id="chatArea">
-      <div class="welcome">
-        <div class="welcome-icon">💬</div>
-        <h2>What can I do for you?</h2>
-        <p>Type your request or use the buttons below to start with AI Tracker.</p>
-
-        <button class="suggest">Making RAB and Project</button>
-        <button class="suggest">Creating Gardens and Buildings</button>
-        <button class="suggest">Repairing machines and making machines</button>
-      </div>
-    </main>
-
-    <footer>
-      <button id="attachBtn">📎</button>
-      <input type="text" id="promptInput" placeholder="Tulis pesan...">
-      <button id="micBtn">🎤</button>
-      <button id="sendBtn">⬆️</button>
-    </footer>
+<div class="container">
+  <div class="chat-area" id="chatArea">
+    <div class="welcome">
+      <div class="welcome-icon">💬</div>
+      <h2>What can I do for you?</h2>
+      <p>Type your request or use the buttons below to start with AI Tracker.</p>
+      <button class="suggest">Making RAB and Project</button>
+      <button class="suggest">Creating Gardens and Buildings</button>
+      <button class="suggest">Repairing machines and making machines</button>
+    </div>
   </div>
-  
-  <script src="./src/script.js"></script>
+  <div class="input-area">
+    <button class="icon-btn">📎</button>
+    <input type="text" id="promptInput" placeholder="2x2">
+    <button class="icon-btn" id="micBtn">🎤</button>
+    <button class="send-btn" id="sendBtn">➤</button>
+  </div>
+  <button id="clearBtn" style="margin-top:10px;width:100%;padding:8px;background:#333;color:#fff;border:none;border-radius:8px;">Clear Chat</button>
+</div>
+<script src="/src/script.js"></script>
 </body>
-        </html>
+</html>
