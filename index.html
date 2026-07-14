@@ -5,30 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Tracker</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
-body{background:#111;color:#fff;display:flex;justify-content:center}
-.app{width:100%;max-width:600px;height:100vh;display:flex;flex-direction:column}
-header{padding:12px 16px;display:flex;align-items:center;border-bottom:1px solid #333;justify-content:space-between}
-header h1{font-size:18px}
-header.icons{display:flex;gap:12px}
-header button{background:transparent;border:none;font-size:22px;cursor:pointer;color:#fff}
-.welcome{text-align:center;padding:40px 20px}
-.welcome-icon{font-size:70px;margin-bottom:20px}
-.suggest{width:100%;padding:14px;margin:8px 0;background:#1f1f1f;border:1px solid #333;border-radius:12px;color:#fff;cursor:pointer}
-main{flex:1;overflow-y:auto;padding:16px}
-.chat-row{display:flex;gap:8px;margin:8px 0;align-items:flex-end}
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif}
+body{background:#0a0a0a;color:#fff;display:flex;justify-content:center}
+.app{width:100%;max-width:700px;height:100vh;display:flex;flex-direction:column}
+header{padding:14px 16px;display:flex;align-items:center;border-bottom:1px solid #222;justify-content:space-between;background:#0a0a0a;position:sticky;top:0;z-index:10}
+header h1{font-size:18px;font-weight:600}
+header.icons{display:flex;gap:16px}
+header button{background:transparent;border:none;font-size:24px;cursor:pointer;color:#fff}
+.welcome{text-align:center;padding:50px 20px}
+.welcome-icon{font-size:80px;margin-bottom:20px}
+.welcome h2{font-size:26px;margin-bottom:8px}
+.suggest{width:100%;padding:15px;margin:10px 0;background:#181818;border:1px solid #2a2a2a;border-radius:14px;color:#fff;cursor:pointer;font-size:15px}
+.suggest:hover{background:#222}
+main{flex:1;overflow-y:auto;padding:16px 12px}
+.chat-row{display:flex;gap:10px;margin:12px 0;align-items:flex-start}
 .chat-row.user{justify-content:flex-end}
-.avatar{width:28px;height:28px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold}
-.avatar.ai{background:#ff6b00}
-.bubble{padding:10px 14px;border-radius:12px;max-width:75%;line-height:1.5}
-.bubble.user{background:#2563eb;color:#fff}
-.bubble.ai{background:#2a2a2a;color:#fff}
-.bubble-name{font-size:11px;color:#aaa;margin-bottom:4px}
-footer{display:flex;padding:12px;border-top:1px solid #333;gap:8px;align-items:center}
-footer input{flex:1;padding:12px;border-radius:12px;border:1px solid #333;background:#1f1f1f;color:#fff}
-footer button{padding:12px;border:none;border-radius:12px;background:#1f1f1f;color:#fff;cursor:pointer;font-size:20px;transition:0.2s}
-footer button.recording{background:#22c55e!important} /* mic hijau pas rekam */
-#sendBtn{background:#2563eb}
+.avatar{width:32px;height:32px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.avatar.ai{background:#f97316}
+.bubble-wrap{display:flex;flex-direction:column;max-width:85%} /* diperbesar */
+.bubble{padding:12px 16px;border-radius:18px;line-height:1.5;font-size:15px;word-wrap:break-word}
+.bubble.user{background:#2563eb;color:#fff;border-bottom-right-radius:6px}
+.bubble.ai{background:#1f1f1f;color:#e5e5e5;border-bottom-left-radius:6px}
+.bubble-name{font-size:12px;color:#888;margin:0 4px 5px 4px;font-weight:500}
+footer{display:flex;padding:12px;border-top:1px solid #222;gap:8px;align-items:center;background:#0a0a0a}
+footer input{flex:1;padding:13px 16px;border-radius:14px;border:1px solid #2a2a2a;background:#181818;color:#fff;font-size:15px}
+footer button{padding:12px;border:none;border-radius:14px;background:#181818;color:#fff;cursor:pointer;font-size:22px;transition:0.2s}
+footer button:active{background:#2a2a2a}
+footer button.recording{background:#22c55e!important;color:#fff}
+#sendBtn{background:#2563eb;padding:12px 16px}
 </style>
 </head>
 <body>
@@ -36,7 +40,7 @@ footer button.recording{background:#22c55e!important} /* mic hijau pas rekam */
   <header>
     <h1>AI Tracker</h1>
     <div class="icons">
-      <button id="muteBtn" title="Speaker">🔊</button> <!-- Default hidup -->
+      <button id="muteBtn" title="Speaker">🔊</button>
       <button id="clearBtn" title="Clear">🗑️</button>
     </div>
   </header>
@@ -45,7 +49,7 @@ footer button.recording{background:#22c55e!important} /* mic hijau pas rekam */
     <div class="welcome">
       <div class="welcome-icon">⚡</div>
       <h2>What can I do for you?</h2>
-      <p style="color:#aaa;margin-bottom:20px">Type your request or use the buttons below</p>
+      <p style="color:#888;margin-bottom:20px">Type your request or use the buttons below</p>
       <button class="suggest">Making RAB and Project</button>
       <button class="suggest">Creating Gardens and Buildings</button>
       <button class="suggest">Repairing machines and making machines</button>
@@ -53,7 +57,7 @@ footer button.recording{background:#22c55e!important} /* mic hijau pas rekam */
   </main>
 
   <footer>
-    <button id="galleryBtn" title="Open Gallery">🖼️</button> <!-- Ganti dari 📎 -->
+    <button id="galleryBtn" title="Gallery">🖼️</button>
     <input type="text" id="promptInput" placeholder="Message AI Tracker">
     <button id="micBtn" title="Voice">🎤</button>
     <button id="sendBtn">➤</button>
@@ -68,9 +72,17 @@ const clearBtn = document.getElementById('clearBtn');
 const muteBtn = document.getElementById('muteBtn');
 const micBtn = document.getElementById('micBtn');
 const galleryBtn = document.getElementById('galleryBtn');
-let muted = false; // default speaker hidup
+let muted = false; // false = suara hidup
 let chatHistory = [];
-let isRecording = false;
+
+function speak(text) {
+  if(muted) return;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+  utterance.rate = 1;
+  speechSynthesis.cancel(); // stop yg lama
+  speechSynthesis.speak(utterance);
+}
 
 function addMessage(text, sender) {
   if(chatArea.querySelector('.welcome')) chatArea.innerHTML = '';
@@ -83,9 +95,11 @@ function addMessage(text, sender) {
   avatar.textContent = sender==='user'? 'U' : 'AI';
 
   const bubbleWrap = document.createElement('div');
+  bubbleWrap.className = 'bubble-wrap';
+
   const name = document.createElement('div');
   name.className = 'bubble-name';
-  name.textContent = sender==='user'? 'You' : 'AI Tracker'; // Bubble biru ada "You"
+  name.textContent = sender==='user'? 'You' : 'AI Tracker';
 
   const bubble = document.createElement('div');
   bubble.className = `bubble ${sender}`;
@@ -100,6 +114,8 @@ function addMessage(text, sender) {
   chatArea.appendChild(row);
   chatArea.scrollTop = chatArea.scrollHeight;
   chatHistory.push({sender, text});
+
+  if(sender==='ai' && text!=='Thinking...') speak(text); // TTS aktif
 }
 
 async function sendMessage() {
@@ -117,51 +133,37 @@ async function sendMessage() {
     });
     const data = await res.json();
     chatArea.lastChild.querySelector('.bubble').textContent = data.reply || data.error;
+    if(data.reply) speak(data.reply); // baca jawaban
   } catch(e) {
     chatArea.lastChild.querySelector('.bubble').textContent = 'Error: Gagal konek ke /api/chat';
   }
 }
 
-// 1. Kirim
+// Events
 sendBtn.onclick = sendMessage;
 promptInput.onkeypress = e => { if(e.key==='Enter') sendMessage() };
-
-// 2. Suggest
 document.querySelectorAll('.suggest').forEach(btn=>{
   btn.onclick = () => { promptInput.value = btn.textContent; sendMessage(); }
 });
-
-// 3. Sampah
-clearBtn.onclick = () => {
-  chatHistory = [];
-  location.reload();
-};
-
-// 4. Speaker - FIX KEBALIK
+clearBtn.onclick = () => { chatHistory = []; speechSynthesis.cancel(); location.reload(); };
 muteBtn.onclick = () => {
   muted =!muted;
-  muteBtn.textContent = muted? '🔇' : '🔊'; // 🔊 hidup, 🔇 mati
+  muteBtn.textContent = muted? '🔇' : '🔊';
+  if(muted) speechSynthesis.cancel();
 }
-
-// 5. Mic - Hijau pas rekam
 micBtn.onclick = () => {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SpeechRecognition) return alert('Browser tidak support voice');
   const rec = new SpeechRecognition();
   rec.lang = 'en-US';
-  rec.onstart = () => { micBtn.classList.add('recording'); }
-  rec.onend = () => { micBtn.classList.remove('recording'); }
+  rec.onstart = () => micBtn.classList.add('recording');
+  rec.onend = () => micBtn.classList.remove('recording');
   rec.onresult = e => { promptInput.value = e.results[0][0].transcript; }
   rec.start();
 }
-
-// 6. Galeri - buka file picker
 galleryBtn.onclick = () => {
   const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.click();
-  input.onchange = () => alert('File dipilih: ' + input.files[0].name);
+  input.type = 'file'; input.accept = 'image/*'; input.click();
 }
 </script>
 </body>
