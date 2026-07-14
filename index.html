@@ -6,39 +6,47 @@
 <title>AI Tracker</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif}
-body{background:#0a0a0a;color:#fff;display:flex;justify-content:center}
+body{background:#000;color:#fff;display:flex;justify-content:center}
 .app{width:100%;max-width:700px;height:100vh;display:flex;flex-direction:column}
-header{padding:14px 16px;display:flex;align-items:center;border-bottom:1px solid #222;justify-content:space-between;background:#0a0a0a;position:sticky;top:0;z-index:10}
+header{padding:16px;display:flex;align-items:center;border-bottom:1px solid #1a1a1a;justify-content:space-between;background:#000;position:sticky;top:0;z-index:10}
+.header-left{display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;background:#3b82f6;border-radius:50%} /* Bola biru */
 header h1{font-size:18px;font-weight:600}
-header.icons{display:flex;gap:16px}
-header button{background:transparent;border:none;font-size:24px;cursor:pointer;color:#fff}
-.welcome{text-align:center;padding:50px 20px}
-.welcome-icon{font-size:80px;margin-bottom:20px}
-.welcome h2{font-size:26px;margin-bottom:8px}
-.suggest{width:100%;padding:15px;margin:10px 0;background:#181818;border:1px solid #2a2a2a;border-radius:14px;color:#fff;cursor:pointer;font-size:15px}
-.suggest:hover{background:#222}
-main{flex:1;overflow-y:auto;padding:16px 12px}
-.chat-row{display:flex;gap:10px;margin:12px 0;align-items:flex-start}
+header.icons{display:flex;gap:18px}
+header button{background:transparent;border:none;font-size:24px;cursor:pointer;color:#ccc}
+.welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+.welcome-icon{width:70px;height:70px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.welcome-icon span{font-size:32px}
+.welcome h2{font-size:24px;margin-bottom:8px;font-weight:600}
+.welcome p{color:#777;font-size:14px;line-height:1.5;margin-bottom:30px;max-width:400px}
+.suggest-wrap{width:100%;max-width:500px}
+.suggest{width:100%;padding:16px;margin:8px 0;background:#111;border:1px solid #222;border-radius:14px;color:#fff;cursor:pointer;font-size:15px;text-align:center}
+.suggest:hover{background:#1a1a1a}
+main{flex:1;overflow-y:auto;padding:16px}
+.chat-row{display:flex;gap:10px;margin:14px 0;align-items:flex-start}
 .chat-row.user{justify-content:flex-end}
 .avatar{width:32px;height:32px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
 .avatar.ai{background:#f97316}
-.bubble-wrap{display:flex;flex-direction:column;max-width:85%} /* diperbesar */
-.bubble{padding:12px 16px;border-radius:18px;line-height:1.5;font-size:15px;word-wrap:break-word}
+.bubble-wrap{display:flex;flex-direction:column;max-width:80%}
+.bubble{padding:12px 16px;border-radius:18px;line-height:1.6;font-size:15px;word-wrap:break-word}
 .bubble.user{background:#2563eb;color:#fff;border-bottom-right-radius:6px}
-.bubble.ai{background:#1f1f1f;color:#e5e5e5;border-bottom-left-radius:6px}
-.bubble-name{font-size:12px;color:#888;margin:0 4px 5px 4px;font-weight:500}
-footer{display:flex;padding:12px;border-top:1px solid #222;gap:8px;align-items:center;background:#0a0a0a}
-footer input{flex:1;padding:13px 16px;border-radius:14px;border:1px solid #2a2a2a;background:#181818;color:#fff;font-size:15px}
-footer button{padding:12px;border:none;border-radius:14px;background:#181818;color:#fff;cursor:pointer;font-size:22px;transition:0.2s}
-footer button:active{background:#2a2a2a}
+.bubble.ai{background:#111;color:#e5e5e5;border:1px solid #222;border-bottom-left-radius:6px}
+.bubble-name{font-size:12px;color:#777;margin:0 4px 6px 4px;font-weight:500}
+footer{display:flex;padding:12px;border-top:1px solid #1a1a1a;gap:8px;align-items:center;background:#000}
+footer input{flex:1;padding:14px 16px;border-radius:14px;border:1px solid #222;background:#111;color:#fff;font-size:15px}
+footer button{padding:12px;border:none;border-radius:14px;background:#111;color:#ccc;cursor:pointer;font-size:22px}
+footer button:active{background:#222}
 footer button.recording{background:#22c55e!important;color:#fff}
-#sendBtn{background:#2563eb;padding:12px 16px}
+#sendBtn{background:#2563eb;padding:12px 18px;color:#fff}
 </style>
 </head>
 <body>
 <div class="app">
   <header>
-    <h1>AI Tracker</h1>
+    <div class="header-left">
+      <div class="dot"></div> <!-- BOLA BIRU -->
+      <h1>AI Tracker</h1>
+    </div>
     <div class="icons">
       <button id="muteBtn" title="Speaker">🔊</button>
       <button id="clearBtn" title="Clear">🗑️</button>
@@ -47,12 +55,14 @@ footer button.recording{background:#22c55e!important;color:#fff}
 
   <main id="chatArea">
     <div class="welcome">
-      <div class="welcome-icon">⚡</div>
+      <div class="welcome-icon"><span>💬</span></div> <!-- Icon chat -->
       <h2>What can I do for you?</h2>
-      <p style="color:#888;margin-bottom:20px">Type your request or use the buttons below</p>
-      <button class="suggest">Making RAB and Project</button>
-      <button class="suggest">Creating Gardens and Buildings</button>
-      <button class="suggest">Repairing machines and making machines</button>
+      <p>Type your request or use the buttons below to start with AI Tracker.</p>
+      <div class="suggest-wrap">
+        <button class="suggest">Making RAB and Project</button>
+        <button class="suggest">Creating Gardens and Buildings</button>
+        <button class="suggest">Repairing machines and making machines</button>
+      </div>
     </div>
   </main>
 
@@ -72,15 +82,14 @@ const clearBtn = document.getElementById('clearBtn');
 const muteBtn = document.getElementById('muteBtn');
 const micBtn = document.getElementById('micBtn');
 const galleryBtn = document.getElementById('galleryBtn');
-let muted = false; // false = suara hidup
+let muted = false;
 let chatHistory = [];
 
 function speak(text) {
   if(muted) return;
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'en-US';
-  utterance.rate = 1;
-  speechSynthesis.cancel(); // stop yg lama
+  speechSynthesis.cancel();
   speechSynthesis.speak(utterance);
 }
 
@@ -103,7 +112,7 @@ function addMessage(text, sender) {
 
   const bubble = document.createElement('div');
   bubble.className = `bubble ${sender}`;
-  bubble.textContent = text;
+  bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); // support bold **
 
   bubbleWrap.appendChild(name);
   bubbleWrap.appendChild(bubble);
@@ -115,7 +124,7 @@ function addMessage(text, sender) {
   chatArea.scrollTop = chatArea.scrollHeight;
   chatHistory.push({sender, text});
 
-  if(sender==='ai' && text!=='Thinking...') speak(text); // TTS aktif
+  if(sender==='ai' && text!=='Thinking...') speak(text);
 }
 
 async function sendMessage() {
@@ -132,14 +141,13 @@ async function sendMessage() {
       body: JSON.stringify({prompt: text})
     });
     const data = await res.json();
-    chatArea.lastChild.querySelector('.bubble').textContent = data.reply || data.error;
-    if(data.reply) speak(data.reply); // baca jawaban
+    chatArea.lastChild.querySelector('.bubble').innerHTML = (data.reply || data.error).replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+    if(data.reply) speak(data.reply);
   } catch(e) {
     chatArea.lastChild.querySelector('.bubble').textContent = 'Error: Gagal konek ke /api/chat';
   }
 }
 
-// Events
 sendBtn.onclick = sendMessage;
 promptInput.onkeypress = e => { if(e.key==='Enter') sendMessage() };
 document.querySelectorAll('.suggest').forEach(btn=>{
@@ -167,4 +175,4 @@ galleryBtn.onclick = () => {
 }
 </script>
 </body>
-</html>
+  </html>
