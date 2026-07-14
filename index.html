@@ -2,60 +2,63 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>AI Tracker</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif}
-body{background:#000;color:#fff;display:flex;justify-content:center}
-.app{width:100%;max-width:700px;height:100vh;display:flex;flex-direction:column}
-header{padding:16px;display:flex;align-items:center;border-bottom:1px solid #1a1a1a;justify-content:space-between;background:#000;position:sticky;top:0;z-index:10}
+html,body{height:100%;background:#000;color:#fff}
+.app{width:100%;height:100dvh;display:flex;flex-direction:column} /* pake dvh biar pas di HP */
+
+header{padding:14px 16px;display:flex;align-items:center;border-bottom:1px solid #1a1a1a;justify-content:space-between;background:#000;position:sticky;top:0;z-index:10}
 .header-left{display:flex;align-items:center;gap:8px}
-.dot{width:10px;height:10px;background:#3b82f6;border-radius:50%} /* Bola biru */
+.dot{width:10px;height:10px;background:#3b82f6;border-radius:50%}
 header h1{font-size:18px;font-weight:600}
 header.icons{display:flex;gap:18px}
 header button{background:transparent;border:none;font-size:24px;cursor:pointer;color:#ccc}
-.welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+
+.welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 16px}
 .welcome-icon{width:70px;height:70px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
 .welcome-icon span{font-size:32px}
 .welcome h2{font-size:24px;margin-bottom:8px;font-weight:600}
-.welcome p{color:#777;font-size:14px;line-height:1.5;margin-bottom:30px;max-width:400px}
-.suggest-wrap{width:100%;max-width:500px}
+.welcome p{color:#777;font-size:14px;line-height:1.5;margin-bottom:30px;padding:0 10px}
+.suggest-wrap{width:100%;padding:0 16px} /* full width di HP */
 .suggest{width:100%;padding:16px;margin:8px 0;background:#111;border:1px solid #222;border-radius:14px;color:#fff;cursor:pointer;font-size:15px;text-align:center}
 .suggest:hover{background:#1a1a1a}
-main{flex:1;overflow-y:auto;padding:16px}
+
+main{flex:1;overflow-y:auto;padding:12px 16px}
 .chat-row{display:flex;gap:10px;margin:14px 0;align-items:flex-start}
 .chat-row.user{justify-content:flex-end}
 .avatar{width:32px;height:32px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
 .avatar.ai{background:#f97316}
-.bubble-wrap{display:flex;flex-direction:column;max-width:80%}
+.bubble-wrap{display:flex;flex-direction:column;max-width:82%} /* 82% biar ga kepotong di HP kecil */
 .bubble{padding:12px 16px;border-radius:18px;line-height:1.6;font-size:15px;word-wrap:break-word}
 .bubble.user{background:#2563eb;color:#fff;border-bottom-right-radius:6px}
 .bubble.ai{background:#111;color:#e5e5e5;border:1px solid #222;border-bottom-left-radius:6px}
 .bubble-name{font-size:12px;color:#777;margin:0 4px 6px 4px;font-weight:500}
-footer{display:flex;padding:12px;border-top:1px solid #1a1a1a;gap:8px;align-items:center;background:#000}
+
+footer{display:flex;padding:10px 12px;border-top:1px solid #1a1a1a;gap:8px;align-items:center;background:#000;position:sticky;bottom:0}
 footer input{flex:1;padding:14px 16px;border-radius:14px;border:1px solid #222;background:#111;color:#fff;font-size:15px}
-footer button{padding:12px;border:none;border-radius:14px;background:#111;color:#ccc;cursor:pointer;font-size:22px}
-footer button:active{background:#222}
+footer button{padding:12px;border:none;border-radius:14px;background:#111;color:#ccc;cursor:pointer;font-size:22px;flex-shrink:0}
 footer button.recording{background:#22c55e!important;color:#fff}
-#sendBtn{background:#2563eb;padding:12px 18px;color:#fff}
+#sendBtn{background:#2563eb;padding:12px 16px;color:#fff}
 </style>
 </head>
 <body>
 <div class="app">
   <header>
     <div class="header-left">
-      <div class="dot"></div> <!-- BOLA BIRU -->
+      <div class="dot"></div>
       <h1>AI Tracker</h1>
     </div>
     <div class="icons">
-      <button id="muteBtn" title="Speaker">🔊</button>
-      <button id="clearBtn" title="Clear">🗑️</button>
+      <button id="muteBtn">🔊</button>
+      <button id="clearBtn">🗑️</button>
     </div>
   </header>
 
   <main id="chatArea">
     <div class="welcome">
-      <div class="welcome-icon"><span>💬</span></div> <!-- Icon chat -->
+      <div class="welcome-icon"><span>💬</span></div>
       <h2>What can I do for you?</h2>
       <p>Type your request or use the buttons below to start with AI Tracker.</p>
       <div class="suggest-wrap">
@@ -67,9 +70,9 @@ footer button.recording{background:#22c55e!important;color:#fff}
   </main>
 
   <footer>
-    <button id="galleryBtn" title="Gallery">🖼️</button>
+    <button id="galleryBtn">🖼️</button>
     <input type="text" id="promptInput" placeholder="Message AI Tracker">
-    <button id="micBtn" title="Voice">🎤</button>
+    <button id="micBtn">🎤</button>
     <button id="sendBtn">➤</button>
   </footer>
 </div>
@@ -95,35 +98,24 @@ function speak(text) {
 
 function addMessage(text, sender) {
   if(chatArea.querySelector('.welcome')) chatArea.innerHTML = '';
-
   const row = document.createElement('div');
   row.className = `chat-row ${sender}`;
-
   const avatar = document.createElement('div');
   avatar.className = `avatar ${sender}`;
   avatar.textContent = sender==='user'? 'U' : 'AI';
-
   const bubbleWrap = document.createElement('div');
   bubbleWrap.className = 'bubble-wrap';
-
   const name = document.createElement('div');
   name.className = 'bubble-name';
   name.textContent = sender==='user'? 'You' : 'AI Tracker';
-
   const bubble = document.createElement('div');
   bubble.className = `bubble ${sender}`;
-  bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); // support bold **
-
-  bubbleWrap.appendChild(name);
-  bubbleWrap.appendChild(bubble);
-
-  if(sender==='user') row.append(bubbleWrap, avatar);
-  else row.append(avatar, bubbleWrap);
-
+  bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+  bubbleWrap.append(name,bubble);
+  if(sender==='user') row.append(bubbleWrap, avatar); else row.append(avatar, bubbleWrap);
   chatArea.appendChild(row);
   chatArea.scrollTop = chatArea.scrollHeight;
   chatHistory.push({sender, text});
-
   if(sender==='ai' && text!=='Thinking...') speak(text);
 }
 
@@ -133,13 +125,8 @@ async function sendMessage() {
   addMessage(text, 'user');
   promptInput.value = '';
   addMessage('Thinking...', 'ai');
-
   try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({prompt: text})
-    });
+    const res = await fetch('/api/chat', {method: 'POST',headers: {'Content-Type':'application/json'},body: JSON.stringify({prompt: text})});
     const data = await res.json();
     chatArea.lastChild.querySelector('.bubble').innerHTML = (data.reply || data.error).replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
     if(data.reply) speak(data.reply);
@@ -150,15 +137,9 @@ async function sendMessage() {
 
 sendBtn.onclick = sendMessage;
 promptInput.onkeypress = e => { if(e.key==='Enter') sendMessage() };
-document.querySelectorAll('.suggest').forEach(btn=>{
-  btn.onclick = () => { promptInput.value = btn.textContent; sendMessage(); }
-});
+document.querySelectorAll('.suggest').forEach(btn=>{btn.onclick = () => { promptInput.value = btn.textContent; sendMessage(); }});
 clearBtn.onclick = () => { chatHistory = []; speechSynthesis.cancel(); location.reload(); };
-muteBtn.onclick = () => {
-  muted =!muted;
-  muteBtn.textContent = muted? '🔇' : '🔊';
-  if(muted) speechSynthesis.cancel();
-}
+muteBtn.onclick = () => {muted =!muted;muteBtn.textContent = muted? '🔇' : '🔊';if(muted) speechSynthesis.cancel();}
 micBtn.onclick = () => {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SpeechRecognition) return alert('Browser tidak support voice');
@@ -169,10 +150,7 @@ micBtn.onclick = () => {
   rec.onresult = e => { promptInput.value = e.results[0][0].transcript; }
   rec.start();
 }
-galleryBtn.onclick = () => {
-  const input = document.createElement('input');
-  input.type = 'file'; input.accept = 'image/*'; input.click();
-}
+galleryBtn.onclick = () => {const input = document.createElement('input');input.type = 'file'; input.accept = 'image/*'; input.click();}
 </script>
 </body>
-  </html>
+</html>
