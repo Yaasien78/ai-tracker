@@ -1,15 +1,43 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Tracker</title>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Tracker</title>
   <link rel="stylesheet" href="./src/style.css">
-<script src="./src/aiService.js"></script>
-<script src="./src/script.js"></script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="status"></div>
+      <h1>AI Tracker</h1>
+      <div class="icons">
+        <button id="muteBtn">🔇</button>
+        <button id="clearBtn">🗑️</button>
+      </div>
+    </header>
+
+    <main id="chatArea">
+      <div class="welcome">
+        <div class="welcome-icon">💬</div>
+        <h2>Ada yang bisa dibantu?</h2>
+        <p>Ketik, rekam suara, atau unggah file untuk mulai mengobrol dengan AI Tracker.</p>
+        
+        <button class="suggest">Ringkas dokumen yang saya unggah</button>
+        <button class="suggest">Bantu saya menulis email</button>
+        <button class="suggest">Jelaskan topik ini dengan sederhana</button>
+      </div>
+    </main>
+
+    <footer>
+      <button id="attachBtn">📎</button>
+      <input type="text" id="promptInput" placeholder="Tulis pesan...">
+      <button id="micBtn">🎤</button>
+      <button id="sendBtn">⬆️</button>
+    </footer>
+  </div>
+  
+  <script src="./src/aiService.js"></script>
+  <script src="./src/script.js"></script>
+</body>
+  </html>
