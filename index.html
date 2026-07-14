@@ -4,10 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Tracker</title>
-<link rel="stylesheet" href="/src/style.css">
+<link rel="stylesheet" href="src/style.css">
 </head>
 <body>
 <div class="container">
+  <!-- INI BAR HEAD -->
+  <div class="header">
+    <div class="header-left">
+      <span class="dot"></span>
+      <h1>AI Tracker</h1>
+    </div>
+    <div class="header-right">
+      <button id="muteBtn">🔇</button>
+      <button id="clearBtn">🗑️</button>
+    </div>
+  </div>
+
   <div class="chat-area" id="chatArea">
     <div class="welcome">
       <div class="welcome-icon">💬</div>
@@ -18,15 +30,14 @@
       <button class="suggest">Repairing machines and making machines</button>
     </div>
   </div>
+
   <div class="input-area">
     <button class="icon-btn">📎</button>
     <input type="text" id="promptInput" placeholder="2x2">
     <button class="icon-btn" id="micBtn">🎤</button>
     <button class="send-btn" id="sendBtn">➤</button>
   </div>
-  <button id="clearBtn" style="margin-top:10px;width:100%;padding:8px;background:#333;color:#fff;border:none;border-radius:8px;">Clear Chat</button>
 </div>
-  <script src="src/script.js"></script>
-
+<script src="src/script.js"></script>
 </body>
 </html>
