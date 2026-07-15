@@ -25,7 +25,7 @@ header button{background:transparent;border:none;font-size:18px;cursor:pointer;c
 .suggest{width:100%;padding:12px;margin:6px 0;background:#1a1a1a;border:1px solid #262626;border-radius:10px;color:#fff;cursor:pointer;font-size:13.5px;text-align:center}
 
 main{flex:1;overflow-y:auto;padding:8px 12px}
-.chat-row{display:flex;gap:6px;margin:10px 0;align-items:flex-start;position:relative} /* position relative buat menu */
+.chat-row{display:flex;gap:6px;margin:10px 0;align-items:flex-start;position:relative}
 .chat-row.user{justify-content:flex-end}
 .avatar{width:26px;height:26px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 .avatar.ai{background:#f97316}
@@ -43,7 +43,6 @@ footer input{flex:1;min-width:0;padding:10px 12px;border-radius:10px;border:1px 
 footer button.recording{background:#22c55e!important;color:#fff}
 .toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;z-index:99;display:none}
 
-/* MENU POPUP CHAT */
 .chat-menu{position:absolute;background:#222;border:1px solid #333;border-radius:10px;padding:6px 0;z-index:20;display:none;min-width:120px;box-shadow:0 4px 12px rgba(0,0,0,0.5)}
 .chat-menu button{width:100%;padding:10px 14px;background:transparent;border:none;color:#fff;text-align:left;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px}
 .chat-menu button:hover{background:#333}
@@ -114,6 +113,26 @@ function speak(text) {
   speechSynthesis.speak(utterance);
 }
 
+// FUNGSI BARU: CEK JAM REALTIME
+function getRealtimeAnswer(text) {
+  const lower = text.toLowerCase();
+  const now = new Date();
+  const options = { timeZone: 'Asia/Jakarta', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const time = now.toLocaleTimeString('id-ID', {timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit'});
+  const date = now.toLocaleDateString('id-ID', options);
+
+  if(lower.includes('jam berapa') || lower.includes('pukul berapa')){
+    return `Sekarang jam **${time} WIB** bro 🕒`;
+  }
+  if(lower.includes('tanggal berapa') || lower.includes('hari ini tanggal')){
+    return `Hari ini **${date}**`;
+  }
+  if(lower.includes('hari apa')){
+    return `Hari ini **${now.toLocaleDateString('id-ID', {timeZone: 'Asia/Jakarta', weekday: 'long'})}**`;
+  }
+  return null;
+}
+
 function addMessage(text, sender, isImage=false) {
   if(chatArea.querySelector('.welcome')) chatArea.innerHTML = '';
   const row = document.createElement('div');
@@ -133,20 +152,19 @@ function addMessage(text, sender, isImage=false) {
     const img = document.createElement('img');
     img.src = text;
     bubble.appendChild(img);
-    bubble.dataset.image = text; // simpan data gambar
+    bubble.dataset.image = text;
   } else {
     bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-    bubble.dataset.text = text; // simpan data teks
+    bubble.dataset.text = text;
   }
 
-  // KLIK BUBBLE UNTUK MENU SIMPAN/HAPUS
   bubble.onclick = (e) => {
     e.stopPropagation();
     selectedBubble = bubble;
     chatMenu.style.display = 'block';
     let x = e.clientX;
     let y = e.clientY;
-    if(x + 140 > window.innerWidth) x = window.innerWidth - 140; // biar ga keluar layar
+    if(x + 140 > window.innerWidth) x = window.innerWidth - 140;
     chatMenu.style.left = x + 'px';
     chatMenu.style.top = y + 'px';
   }
@@ -164,6 +182,14 @@ async function sendMessage() {
   if (!text) return;
   addMessage(text, 'user');
   promptInput.value = '';
+
+  // CEK DULU APA PERTANYAAN TENTANG WAKTU
+  const realtime = getRealtimeAnswer(text);
+  if(realtime){
+    addMessage(realtime, 'ai');
+    return;
+  }
+
   addMessage('Thinking...', 'ai');
   try {
     const res = await fetch('/api/chat', {method: 'POST',headers: {'Content-Type':'application/json'},body: JSON.stringify({prompt: text})});
@@ -194,18 +220,16 @@ galleryBtn.onclick = () => {
   input.click();
 }
 
-// MENU CHAT: SIMPAN & HAPUS
+// MENU CHAT
 document.getElementById('saveBtn').onclick = () => {
   if(selectedBubble){
     if(selectedBubble.dataset.image){
-      // Simpan gambar
       const a = document.createElement('a');
       a.href = selectedBubble.dataset.image;
       a.download = `AI-Tracker-Image-${Date.now()}.png`;
       a.click();
       showToast('Gambar disimpan!');
     } else {
-      // Simpan teks
       const text = selectedBubble.dataset.text || selectedBubble.innerText;
       navigator.clipboard.writeText(text);
       showToast('Teks disalin ke clipboard!');
