@@ -31,9 +31,10 @@ main{flex:1;overflow-y:auto;padding:8px 12px}
 .bubble.ai{background:#1a1a1a;color:#e5e5e5;border:1px solid #262626;border-bottom-left-radius:4px}
 .bubble img{max-width:100%;border-radius:10px;margin-top:6px;display:block}
 .bubble-name{font-size:10.5px;color:#777;margin:0 2px 3px 2px}
-footer{display:flex;padding:8px 10px;border-top:1px solid #1a1a1a;gap:5px;align-items:center;background:#000;flex-shrink:0;position:sticky;bottom:0;z-index:10}
-.footer-btn{padding:9px 8px;border:none;border-radius:10px;background:#111;color:#aaa;cursor:pointer;font-size:18px;flex-shrink:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center}
-footer input{flex:1;min-width:0;padding:10px 12px;border-radius:10px;border:1px solid #262626;background:#111;color:#fff;font-size:13.5px}
+.app{width:100%;height:100%;display:flex;flex-direction:column}
+header{padding:10px 12px;display:flex;align-items:center;border-bottom:1px solid #1a1a1a;justify-content:space-between;background:#000;flex-shrink:0}
+main{flex:1;overflow-y:auto;padding:8px 12px;-webkit-overflow-scrolling: touch} /* TAMBAH INI BIAR HALUS DI HP */
+footer{display:flex;padding:8px 10px;border-top:1px solid #1a1a1a;gap:5px;align-items:center;background:#000;flex-shrink:0} /* HAPUS position:sticky */
 #sendBtn{background:#2563eb;color:#fff;width:40px;height:40px}
 footer button.recording{background:#22c55e!important;color:#fff}
 .toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;z-index:99;display:none}
@@ -170,9 +171,16 @@ async function sendMessage() {
   const imageToSend = pendingImage;
   pendingImage = null;
   promptInput.value = '';
+  promptInput.placeholder = "Message AI Tracker";
+  
   const realtime = getRealtimeAnswer(text);
   if(realtime){ addMessage(realtime, 'ai'); return; }
-  addMessage('Thinking...', 'ai');
+
+  const thinkingRow = document.createElement('div');
+  thinkingRow.innerHTML = `<div class="chat-row ai"><div class="avatar ai">AI</div><div class="bubble-wrap"><div class="bubble-name">AI Tracker</div><div class="bubble ai">Thinking...</div></div></div>`;
+  chatArea.appendChild(thinkingRow);
+  chatArea.scrollTop = chatArea.scrollHeight;
+
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
@@ -180,19 +188,19 @@ async function sendMessage() {
       body: JSON.stringify({prompt: text, image: imageToSend})
     });
     const data = await res.json();
+    thinkingRow.remove();
+    
     if(data.image){
-      chatArea.lastChild.remove();
       addMessage(data.image, 'ai', true);
       addMessage(data.caption || 'Ini gambarnya bro', 'ai');
     } else {
-      chatArea.lastChild.querySelector('.bubble').innerHTML = (data.reply || data.error).replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-      chatArea.lastChild.querySelector('.bubble').dataset.text = data.reply;
-      if(data.reply) speak(data.reply);
+      addMessage(data.reply || data.error, 'ai');
     }
   } catch(e) {
-    chatArea.lastChild.querySelector('.bubble').textContent = 'Error: Gagal konek ke /api/chat';
+    thinkingRow.remove();
+    addMessage('Error: Gagal konek ke /api/chat', 'ai');
   }
-}
+  } 
 galleryBtn.onclick = () => {
   const input = document.createElement('input');
   input.type = 'file';
