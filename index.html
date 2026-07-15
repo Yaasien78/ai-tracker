@@ -218,7 +218,7 @@ galleryBtn.onclick = () => {
         pendingImage = reader.result;
         promptInput.placeholder = "Tambah keterangan untuk gambar...";
         showToast('Gambar siap dikirim');
-        sendMessage(); // langsung kirim
+        sendMessage();
       }
       reader.readAsDataURL(file);
     }
@@ -226,7 +226,7 @@ galleryBtn.onclick = () => {
   input.click();
 }
 
-// MIC - CUKUP 1X INI AJA
+// MIC
 micBtn.onclick = () => {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SpeechRecognition) return showToast('Browser tidak support voice');
@@ -245,7 +245,7 @@ micBtn.onclick = () => {
 sendBtn.onclick = sendMessage;
 promptInput.onkeypress = e => { if(e.key==='Enter'){sendMessage(); promptInput.placeholder = "Message AI Tracker"} };
 
-// HAPUS BARIS 246-256 YANG LAMA, GANTI PAKE INI
+// LAINNYA
 document.getElementById('deleteBtn').onclick = () => {
   if(selectedBubble){
     selectedBubble.closest('.chat-row').remove();
@@ -256,10 +256,10 @@ document.getElementById('deleteBtn').onclick = () => {
 
 document.onclick = (e) => { if(!chatMenu.contains(e.target)) chatMenu.style.display = 'none' }
 muteBtn.onclick = () => { muted =!muted; muteBtn.textContent = muted? '🔇' : '🔊'; if(muted) speechSynthesis.cancel(); }
-<script>
+
 if('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
 }
 </script>
 </body>
-  </html>
+</html>
