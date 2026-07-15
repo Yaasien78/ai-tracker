@@ -1,16 +1,19 @@
 {
   "name": "AI Tracker",
-  "short_name": "AITracker",
-  "description": "AI Tracker siap bantu kamu bikin RAB, desain, gambar, dan jawab apapun",
+  "short_name": "AI Tracker",
+  "description": "AI Tracker by yaasien - Asisten AI RAB, Desain, Gambar",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#000000",
   "theme_color": "#2563eb",
   "icons": [
     {
       "src": "logo.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
