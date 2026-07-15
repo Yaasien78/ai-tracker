@@ -15,10 +15,9 @@ header h1{font-size:15px;font-weight:600}
 header.icons{display:flex;gap:12px}
 header button{background:transparent;border:none;font-size:18px;cursor:pointer;color:#ccc}
 .welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 12px;overflow-y:auto}
-.welcome-icon{width:56px;height:56px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
-.welcome-icon span{font-size:26px}
+.welcome-icon{width:56px;height:56px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;margin-bottom:14px;padding:6px} /* padding biar logo ga mepet */
+.welcome-icon img{width:44px;height:44px;object-fit:contain} /* UKURAN LOGO 44px */
 .welcome h2{font-size:18px;margin-bottom:6px;font-weight:600}
-.welcome p{color:#888;font-size:12.5px;line-height:1.4;margin-bottom:20px}
 .suggest-wrap{width:100%}
 .suggest{width:100%;padding:12px;margin:6px 0;background:#1a1a1a;border:1px solid #262626;border-radius:10px;color:#fff;cursor:pointer;font-size:13.5px;text-align:center}
 main{flex:1;overflow-y:auto;padding:8px 12px}
@@ -52,9 +51,10 @@ footer button.recording{background:#22c55e!important;color:#fff}
 
   <main id="chatArea">
       <div class="welcome">
-        <div class="welcome-icon"><span>💬</span></div>
+        <div class="welcome-icon">
+          <img src="https://i.imgur.com/LOGO-KAMU.png" alt="A TRACKER"> <!-- GANTI LINK INI -->
+        </div>
         <h2>What can I do for you?</h2>
-        <p>Ketik pesan, upload gambar, atau minta "buat gambar..."</p>
       </div>
   </main>
 
@@ -83,7 +83,7 @@ const chatMenu = document.getElementById('chatMenu');
 let muted = false;
 let chatHistory = [];
 let selectedBubble = null;
-let pendingImage = null; // buat simpan gambar yg diupload
+let pendingImage = null;
 
 function showToast(msg){
   toast.textContent = msg;
@@ -97,8 +97,6 @@ function speak(text) {
   speechSynthesis.cancel();
   speechSynthesis.speak(utterance);
 }
-
-// CEK JAM REALTIME
 function getRealtimeAnswer(text) {
   const lower = text.toLowerCase();
   const now = new Date();
@@ -110,7 +108,6 @@ function getRealtimeAnswer(text) {
   if(lower.includes('hari apa')) return `Hari ini **${now.toLocaleDateString('id-ID', {timeZone: 'Asia/Jakarta', weekday: 'long'})}**`;
   return null;
 }
-
 function addMessage(text, sender, isImage=false) {
   if(chatArea.querySelector('.welcome')) chatArea.innerHTML = '';
   const row = document.createElement('div');
@@ -125,7 +122,6 @@ function addMessage(text, sender, isImage=false) {
   name.textContent = sender==='user'? 'You' : 'AI Tracker';
   const bubble = document.createElement('div');
   bubble.className = `bubble ${sender}`;
-
   if(isImage){
     const img = document.createElement('img');
     img.src = text;
@@ -135,7 +131,6 @@ function addMessage(text, sender, isImage=false) {
     bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
     bubble.dataset.text = text;
   }
-
   bubble.onclick = (e) => {
     e.stopPropagation();
     selectedBubble = bubble;
@@ -146,7 +141,6 @@ function addMessage(text, sender, isImage=false) {
     chatMenu.style.left = x + 'px';
     chatMenu.style.top = y + 'px';
   }
-
   bubbleWrap.append(name,bubble);
   if(sender==='user') row.append(bubbleWrap, avatar); else row.append(avatar, bubbleWrap);
   chatArea.appendChild(row);
@@ -154,7 +148,6 @@ function addMessage(text, sender, isImage=false) {
   chatHistory.push({sender, text, isImage});
   if(sender==='ai' && text!=='Thinking...') speak(text);
 }
-
 async function sendMessage() {
   const text = promptInput.value.trim();
   if (!text &&!pendingImage) return;
@@ -162,23 +155,18 @@ async function sendMessage() {
   const imageToSend = pendingImage;
   pendingImage = null;
   promptInput.value = '';
-
   const realtime = getRealtimeAnswer(text);
   if(realtime){ addMessage(realtime, 'ai'); return; }
-
   addMessage('Thinking...', 'ai');
   try {
-    // KIRIM KE /api/chat DENGAN GAMBAR JIKA ADA
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({prompt: text, image: imageToSend})
     });
     const data = await res.json();
-    
-    // CEK APAKAH BALASAN BERUPA GAMBAR
     if(data.image){
-      chatArea.lastChild.remove(); // hapus "Thinking..."
+      chatArea.lastChild.remove();
       addMessage(data.image, 'ai', true);
       addMessage(data.caption || 'Ini gambarnya bro', 'ai');
     } else {
@@ -190,8 +178,6 @@ async function sendMessage() {
     chatArea.lastChild.querySelector('.bubble').textContent = 'Error: Gagal konek ke /api/chat';
   }
 }
-
-// UPLOAD GAMBAR -> SIMPAN DULU, KIRIM PAS SEND
 galleryBtn.onclick = () => {
   const input = document.createElement('input');
   input.type = 'file';
@@ -201,7 +187,7 @@ galleryBtn.onclick = () => {
     if(file){
       const reader = new FileReader();
       reader.onload = () => {
-        pendingImage = reader.result; // simpan base64
+        pendingImage = reader.result;
         promptInput.placeholder = "Tambah keterangan untuk gambar...";
         showToast('Gambar siap dikirim');
       }
@@ -210,8 +196,6 @@ galleryBtn.onclick = () => {
   }
   input.click();
 }
-
-// MENU CHAT SIMPAN/HAPUS - UDAH FIX
 document.getElementById('saveBtn').onclick = () => {
   if(selectedBubble){
     if(selectedBubble.dataset.image){
@@ -236,7 +220,6 @@ document.getElementById('deleteBtn').onclick = () => {
   }
 }
 document.onclick = (e) => { if(!chatMenu.contains(e.target)) chatMenu.style.display = 'none' }
-
 sendBtn.onclick = sendMessage;
 promptInput.onkeypress = e => { if(e.key==='Enter'){sendMessage(); promptInput.placeholder = "Message AI Tracker"} };
 muteBtn.onclick = () => {muted =!muted;muteBtn.textContent = muted? '🔇' : '🔊';if(muted) speechSynthesis.cancel();}
