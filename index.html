@@ -25,7 +25,7 @@ header button{background:transparent;border:none;font-size:18px;cursor:pointer;c
 .suggest{width:100%;padding:12px;margin:6px 0;background:#1a1a1a;border:1px solid #262626;border-radius:10px;color:#fff;cursor:pointer;font-size:13.5px;text-align:center}
 
 main{flex:1;overflow-y:auto;padding:8px 12px}
-.chat-row{display:flex;gap:6px;margin:10px 0;align-items:flex-start}
+.chat-row{display:flex;gap:6px;margin:10px 0;align-items:flex-start;position:relative} /* position relative buat menu */
 .chat-row.user{justify-content:flex-end}
 .avatar{width:26px;height:26px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 .avatar.ai{background:#f97316}
@@ -33,7 +33,7 @@ main{flex:1;overflow-y:auto;padding:8px 12px}
 .bubble{padding:9px 12px;border-radius:14px;line-height:1.4;font-size:13.5px;cursor:pointer;user-select:none}
 .bubble.user{background:#2563eb;color:#fff;border-bottom-right-radius:4px}
 .bubble.ai{background:#1a1a1a;color:#e5e5e5;border:1px solid #262626;border-bottom-left-radius:4px}
-.bubble img{max-width:100%;border-radius:10px;margin-top:6px}
+.bubble img{max-width:100%;border-radius:10px;margin-top:6px;display:block}
 .bubble-name{font-size:10.5px;color:#777;margin:0 2px 3px 2px}
 
 footer{display:flex;padding:8px 10px;border-top:1px solid #1a1a1a;gap:5px;align-items:center;background:#000;flex-shrink:0;position:sticky;bottom:0;z-index:10}
@@ -44,8 +44,8 @@ footer button.recording{background:#22c55e!important;color:#fff}
 .toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;z-index:99;display:none}
 
 /* MENU POPUP CHAT */
-.chat-menu{position:absolute;background:#222;border:1px solid #333;border-radius:8px;padding:4px 0;z-index:20;display:none}
-.chat-menu button{width:100%;padding:8px 14px;background:transparent;border:none;color:#fff;text-align:left;font-size:13px;cursor:pointer}
+.chat-menu{position:absolute;background:#222;border:1px solid #333;border-radius:10px;padding:6px 0;z-index:20;display:none;min-width:120px;box-shadow:0 4px 12px rgba(0,0,0,0.5)}
+.chat-menu button{width:100%;padding:10px 14px;background:transparent;border:none;color:#fff;text-align:left;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px}
 .chat-menu button:hover{background:#333}
 </style>
 </head>
@@ -57,7 +57,7 @@ footer button.recording{background:#22c55e!important;color:#fff}
       <h1>AI Tracker</h1>
     </div>
     <div class="icons">
-      <button id="muteBtn">🔊</button> <!-- CUMA ADA MUTE -->
+      <button id="muteBtn">🔊</button>
     </div>
   </header>
 
@@ -82,7 +82,7 @@ footer button.recording{background:#22c55e!important;color:#fff}
   </footer>
   <div id="toast" class="toast">Teks disalin!</div>
   <div id="chatMenu" class="chat-menu">
-    <button id="copyBtn">📋 Salin</button>
+    <button id="saveBtn">💾 Simpan</button>
     <button id="deleteBtn">🗑️ Hapus</button>
   </div>
 </div>
@@ -133,16 +133,22 @@ function addMessage(text, sender, isImage=false) {
     const img = document.createElement('img');
     img.src = text;
     bubble.appendChild(img);
+    bubble.dataset.image = text; // simpan data gambar
   } else {
     bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+    bubble.dataset.text = text; // simpan data teks
   }
 
-  // KLIK BUBBLE UNTUK MENU
+  // KLIK BUBBLE UNTUK MENU SIMPAN/HAPUS
   bubble.onclick = (e) => {
-    selectedBubble = row;
+    e.stopPropagation();
+    selectedBubble = bubble;
     chatMenu.style.display = 'block';
-    chatMenu.style.left = e.pageX + 'px';
-    chatMenu.style.top = e.pageY + 'px';
+    let x = e.clientX;
+    let y = e.clientY;
+    if(x + 140 > window.innerWidth) x = window.innerWidth - 140; // biar ga keluar layar
+    chatMenu.style.left = x + 'px';
+    chatMenu.style.top = y + 'px';
   }
 
   bubbleWrap.append(name,bubble);
@@ -163,6 +169,7 @@ async function sendMessage() {
     const res = await fetch('/api/chat', {method: 'POST',headers: {'Content-Type':'application/json'},body: JSON.stringify({prompt: text})});
     const data = await res.json();
     chatArea.lastChild.querySelector('.bubble').innerHTML = (data.reply || data.error).replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+    chatArea.lastChild.querySelector('.bubble').dataset.text = data.reply;
     if(data.reply) speak(data.reply);
   } catch(e) {
     chatArea.lastChild.querySelector('.bubble').textContent = 'Error: Gagal konek ke /api/chat';
@@ -187,18 +194,28 @@ galleryBtn.onclick = () => {
   input.click();
 }
 
-// MENU CHAT
-document.getElementById('copyBtn').onclick = () => {
+// MENU CHAT: SIMPAN & HAPUS
+document.getElementById('saveBtn').onclick = () => {
   if(selectedBubble){
-    const text = selectedBubble.querySelector('.bubble').innerText;
-    navigator.clipboard.writeText(text);
-    showToast('Teks disalin!');
+    if(selectedBubble.dataset.image){
+      // Simpan gambar
+      const a = document.createElement('a');
+      a.href = selectedBubble.dataset.image;
+      a.download = `AI-Tracker-Image-${Date.now()}.png`;
+      a.click();
+      showToast('Gambar disimpan!');
+    } else {
+      // Simpan teks
+      const text = selectedBubble.dataset.text || selectedBubble.innerText;
+      navigator.clipboard.writeText(text);
+      showToast('Teks disalin ke clipboard!');
+    }
     chatMenu.style.display = 'none';
   }
 }
 document.getElementById('deleteBtn').onclick = () => {
   if(selectedBubble){
-    selectedBubble.remove();
+    selectedBubble.closest('.chat-row').remove();
     showToast('Pesan dihapus');
     chatMenu.style.display = 'none';
   }
