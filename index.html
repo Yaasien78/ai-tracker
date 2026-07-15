@@ -1,210 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Tracker</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#000">
-<link rel="icon" href="/logo.png">
-  <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui, -apple-system, sans-serif}
-html,body{height:100%;background:#000;color:#fff;overflow:hidden}
-.app{width:100%;height:100%;display:flex;flex-direction:column}
-header{padding:10px 12px;display:flex;align-items:center;border-bottom:1px solid #1a1a1a;justify-content:space-between;background:#000;flex-shrink:0;position:sticky;top:0;z-index:10}
-.header-left{display:flex;align-items:center;gap:6px}
-.dot{width:8px;height:8px;background:#3b82f6;border-radius:50%}
-header h1{font-size:15px;font-weight:600}
-header.icons{display:flex;gap:12px}
-header button{background:transparent;border:none;font-size:18px;cursor:pointer;color:#ccc}
-.welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 12px;overflow-y:auto}
-.welcome-icon{width:56px;height:56px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;margin-bottom:14px;padding:6px} /* padding biar logo ga mepet */
-.welcome-icon img{width:44px;height:44px;object-fit:contain} /* UKURAN LOGO 44px */
-.welcome h2{font-size:18px;margin-bottom:6px;font-weight:600}
-.suggest-wrap{width:100%}
-.suggest{width:100%;padding:12px;margin:6px 0;background:#1a1a1a;border:1px solid #262626;border-radius:10px;color:#fff;cursor:pointer;font-size:13.5px;text-align:center}
-main{flex:1;overflow-y:auto;padding:8px 12px}
-.chat-row{display:flex;gap:6px;margin:10px 0;align-items:flex-start;position:relative}
-.chat-row.user{justify-content:flex-end}
-.avatar{width:26px;height:26px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
-.avatar.ai{background:#f97316}
-.bubble-wrap{display:flex;flex-direction:column;max-width:78%}
-.bubble{padding:9px 12px;border-radius:14px;line-height:1.4;font-size:13.5px;cursor:pointer;user-select:none}
-.bubble.user{background:#2563eb;color:#fff;border-bottom-right-radius:4px}
-.bubble.ai{background:#1a1a1a;color:#e5e5e5;border:1px solid #262626;border-bottom-left-radius:4px}
-.bubble img{max-width:100%;border-radius:10px;margin-top:6px;display:block}
-.bubble-name{font-size:10.5px;color:#777;margin:0 2px 3px 2px}
-footer{display:flex;padding:10px;border-top:1px solid #1a1a1a;gap:8px;align-items:center;background:#000;flex-shrink:0}
-footer button{width:40px;height:40px;border:none;border-radius:50%;background:#1f1f1f;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-footer input{flex:1;min-width:0;height:40px;padding:0 14px;border-radius:20px;border:1px solid #333;background:#1a1a1a;color:#fff;font-size:14px;outline:none}
-footer input:focus{border-color:#2563eb}
-#sendBtn{background:#2563eb;color:#fff}
-  footer button.recording{background:#22c55e!important;color:#fff}
-.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;z-index:99;display:none}
-.chat-menu{position:absolute;background:#222;border:1px solid #333;border-radius:10px;padding:6px 0;z-index:20;display:none;min-width:120px;box-shadow:0 4px 12px rgba(0,0,0,0.5)}
-.chat-menu button{width:100%;padding:10px 14px;background:transparent;border:none;color:#fff;text-align:left;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px}
-.chat-menu button:hover{background:#333}
-.welcome-icon img{background:transparent}
-  .welcome p{
-  color:#888;
-  font-size:12.5px;
-  line-height:1.4;
-  margin-top:6px;
-  padding:0 20px;
-}
-.welcome p.credit{
-  color:#555;
-  font-size:11px;
-  margin-top:16px;
-  font-style:italic;
-                  }
+<style>
+body{margin:0;font-family:system-ui;background:#0b0b0c;color:#fff;display:flex;flex-direction:column;height:100vh}
+header{padding:14px 16px;font-weight:700;background:#111;border-bottom:1px solid #222}
+#chat{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.chat-row{display:flex}.user{justify-content:flex-end}.bot{justify-content:flex-start}
+.bubble{max-width:75%;padding:12px 14px;border-radius:18px;cursor:pointer;position:relative}
+.user.bubble{background:#2a2a2a}.bot.bubble{background:#1a1a1a}
+#footer{display:flex;gap:8px;padding:10px;border-top:1px solid #222;background:#111}
+#footer input{flex:1;padding:12px;border-radius:20px;border:none;background:#222;color:#fff;outline:none}
+.icon-btn{background:#222;border:none;color:#fff;padding:10px 12px;border-radius:50%;font-size:18px;cursor:pointer}
+.icon-btn.recording{background:red}
+#chatMenu{position:absolute;background:#222;border:1px solid #333;border-radius:8px;padding:6px 10px;display:none;z-index:99}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;padding:8px 14px;border-radius:20px;font-size:13px;display:none}
 </style>
 </head>
 <body>
-<div class="app">
-  <header>
-    <div class="header-left"><div class="dot"></div><h1>AI Tracker</h1></div>
-    <div class="icons"><button id="muteBtn">🔊</button></div>
-  </header>
+<header>AI Tracker</header>
+<div id="chat"></div>
 
-  <main id="chatArea">
-      <div class="welcome">
-  <div class="welcome-icon">
-    <img src="/logo.png" alt="A TRACKER">
-  </div>
-  <h2>What can I do for you?</h2>
-  <p>AI Tracker siap bantu kamu bikin RAB, desain, gambar, dan jawab apapun</p>
-  <p class="credit">from the app developer yaasien @2026</p>
-      </div>
-  </main>
-
-  <footer>
-    <button id="galleryBtn" class="footer-btn">🖼️</button>
-    <input type="text" id="promptInput" placeholder="Message AI Tracker">
-    <button id="micBtn" class="footer-btn">🎤</button>
-    <button id="sendBtn" class="footer-btn">➤</button>
-  </footer>
-  <div id="toast" class="toast">Teks disalin!</div>
-  <div id="chatMenu" class="chat-menu">
-    <button id="saveBtn">💾 Simpan</button>
-    <button id="deleteBtn">🗑️ Hapus</button>
-  </div>
+<div id="footer">
+  <button id="galleryBtn" class="icon-btn">🖼️</button>
+  <input id="promptInput" placeholder="Message AI Tracker">
+  <button id="micBtn" class="icon-btn">🎤</button>
+  <button id="muteBtn" class="icon-btn">🔊</button>
+  <button id="sendBtn" class="icon-btn">➤</button>
 </div>
 
+<div id="chatMenu"><div id="deleteBtn">Hapus</div></div>
+<div id="toast" class="toast"></div>
+
 <script>
-const chatArea = document.getElementById('chatArea');
+const chat = document.getElementById('chat');
 const promptInput = document.getElementById('promptInput');
 const sendBtn = document.getElementById('sendBtn');
-const muteBtn = document.getElementById('muteBtn');
 const micBtn = document.getElementById('micBtn');
 const galleryBtn = document.getElementById('galleryBtn');
-const toast = document.getElementById('toast');
+const muteBtn = document.getElementById('muteBtn');
 const chatMenu = document.getElementById('chatMenu');
-let muted = false;
-let chatHistory = [];
-let selectedBubble = null;
+const toast = document.getElementById('toast');
 let pendingImage = null;
+let muted = false;
+let selectedBubble = null;
 
 function showToast(msg){
   toast.textContent = msg;
   toast.style.display = 'block';
-  setTimeout(()=>toast.style.display='none', 2000);
+  setTimeout(()=>toast.style.display='none',2000);
 }
-function speak(text) {
-  if(muted) return;
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'id-ID';
-  speechSynthesis.cancel();
-  speechSynthesis.speak(utterance);
-}
-function getRealtimeAnswer(text) {
-  const lower = text.toLowerCase();
-  const now = new Date();
-  const options = { timeZone: 'Asia/Jakarta', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  const time = now.toLocaleTimeString('id-ID', {timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit'});
-  const date = now.toLocaleDateString('id-ID', options);
-  if(lower.includes('jam berapa') || lower.includes('pukul berapa')) return `Sekarang jam **${time} WIB** 🕒`;
-  if(lower.includes('tanggal berapa')) return `Hari ini **${date}**`;
-  if(lower.includes('hari apa')) return `Hari ini **${now.toLocaleDateString('id-ID', {timeZone: 'Asia/Jakarta', weekday: 'long'})}**`;
-  return null;
-}
-function addMessage(text, sender, isImage=false) {
-  if(chatArea.querySelector('.welcome')) chatArea.innerHTML = '';
+
+function addBubble(text, who){
   const row = document.createElement('div');
-  row.className = `chat-row ${sender}`;
-  const avatar = document.createElement('div');
-  avatar.className = `avatar ${sender}`;
-  avatar.textContent = sender==='user'? 'U' : 'AI';
-  const bubbleWrap = document.createElement('div');
-  bubbleWrap.className = 'bubble-wrap';
-  const name = document.createElement('div');
-  name.className = 'bubble-name';
-  name.textContent = sender==='user'? 'You' : 'AI Tracker';
+  row.className = 'chat-row ' + who;
   const bubble = document.createElement('div');
-  bubble.className = `bubble ${sender}`;
-  if(isImage){
-    const img = document.createElement('img');
-    img.src = text;
-    bubble.appendChild(img);
-    bubble.dataset.image = text;
-  } else {
-    bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-    bubble.dataset.text = text;
-  }
-  bubble.onclick = (e) => {
-    e.stopPropagation();
+  bubble.className = 'bubble';
+  bubble.textContent = text;
+  bubble.onclick = (e)=>{
     selectedBubble = bubble;
+    chatMenu.style.left = e.pageX+'px';
+    chatMenu.style.top = e.pageY+'px';
     chatMenu.style.display = 'block';
-    let x = e.clientX;
-    let y = e.clientY;
-    if(x + 140 > window.innerWidth) x = window.innerWidth - 140;
-    chatMenu.style.left = x + 'px';
-    chatMenu.style.top = y + 'px';
   }
-  bubbleWrap.append(name,bubble);
-  if(sender==='user') row.append(bubbleWrap, avatar); else row.append(avatar, bubbleWrap);
-  chatArea.appendChild(row);
-  chatArea.scrollTop = chatArea.scrollHeight;
-  chatHistory.push({sender, text, isImage});
-  if(sender==='ai' && text!=='Thinking...') speak(text);
+  row.appendChild(bubble);
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
 }
-async function sendMessage() {
+
+async function sendMessage(){
   const text = promptInput.value.trim();
-  if (!text &&!pendingImage) return;
-  addMessage(text || '[Mengirim gambar]', 'user',!!pendingImage);
+  if(!text &&!pendingImage) return;
+  if(text) addBubble(text, 'user');
+  if(pendingImage) addBubble('[Gambar terkirim]', 'user');
+  promptInput.value = '';
   const imageToSend = pendingImage;
   pendingImage = null;
-  promptInput.value = '';
   promptInput.placeholder = "Message AI Tracker";
-  
-  const realtime = getRealtimeAnswer(text);
-  if(realtime){ addMessage(realtime, 'ai'); return; }
-
-  const thinkingRow = document.createElement('div');
-  thinkingRow.innerHTML = `<div class="chat-row ai"><div class="avatar ai">AI</div><div class="bubble-wrap"><div class="bubble-name">AI Tracker</div><div class="bubble ai">Thinking...</div></div></div>`;
-  chatArea.appendChild(thinkingRow);
-  chatArea.scrollTop = chatArea.scrollHeight;
-
-  try {
+  addBubble('thinking...', 'bot');
+  try{
     const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({prompt: text, image: imageToSend})
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({prompt: text || "Jelaskan gambar ini", image: imageToSend})
     });
     const data = await res.json();
-    thinkingRow.remove();
-    
-    if(data.image){
-      addMessage(data.image, 'ai', true);
-      addMessage(data.caption || 'Ini gambarnya bro', 'ai');
-    } else {
-      addMessage(data.reply || data.error, 'ai');
-    }
-  } catch(e) {
-    thinkingRow.remove();
-    addMessage('Error: Gagal konek ke /api/chat', 'ai');
+    chat.lastChild.querySelector('.bubble').textContent = data.reply || data.error;
+    if(!muted) speechSynthesis.speak(new SpeechSynthesisUtterance(data.reply));
+  }catch{
+    chat.lastChild.querySelector('.bubble').textContent = 'Error koneksi';
   }
-  } 
+}
+
 // GALLERY
 galleryBtn.onclick = () => {
   const input = document.createElement('input');
@@ -217,7 +106,7 @@ galleryBtn.onclick = () => {
       reader.onload = () => {
         pendingImage = reader.result;
         promptInput.placeholder = "Tambah keterangan untuk gambar...";
-        showToast('Gambar siap dikirim');
+        showToast('Gambar siap');
         sendMessage();
       }
       reader.readAsDataURL(file);
@@ -229,7 +118,7 @@ galleryBtn.onclick = () => {
 // MIC
 micBtn.onclick = () => {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SpeechRecognition) return showToast('Browser tidak support voice');
+  if(!SpeechRecognition) return showToast('Tidak support voice');
   const rec = new SpeechRecognition();
   rec.lang = 'id-ID';
   rec.onstart = () => micBtn.classList.add('recording');
@@ -241,25 +130,18 @@ micBtn.onclick = () => {
   rec.start();
 }
 
-// SEND
+// SEND + LAINNYA
 sendBtn.onclick = sendMessage;
-promptInput.onkeypress = e => { if(e.key==='Enter'){sendMessage(); promptInput.placeholder = "Message AI Tracker"} };
-
-// LAINNYA
+promptInput.onkeypress = e => { if(e.key==='Enter'){sendMessage()} };
 document.getElementById('deleteBtn').onclick = () => {
   if(selectedBubble){
     selectedBubble.closest('.chat-row').remove();
-    showToast('Pesan dihapus');
+    showToast('Dihapus');
     chatMenu.style.display = 'none';
   }
 }
-
 document.onclick = (e) => { if(!chatMenu.contains(e.target)) chatMenu.style.display = 'none' }
 muteBtn.onclick = () => { muted =!muted; muteBtn.textContent = muted? '🔇' : '🔊'; if(muted) speechSynthesis.cancel(); }
-
-if('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
-}
 </script>
 </body>
 </html>
