@@ -205,6 +205,7 @@ async function sendMessage() {
     addMessage('Error: Gagal konek ke /api/chat', 'ai');
   }
   } 
+// GALLERY
 galleryBtn.onclick = () => {
   const input = document.createElement('input');
   input.type = 'file';
@@ -217,28 +218,32 @@ galleryBtn.onclick = () => {
         pendingImage = reader.result;
         promptInput.placeholder = "Tambah keterangan untuk gambar...";
         showToast('Gambar siap dikirim');
+        sendMessage(); // langsung kirim
       }
       reader.readAsDataURL(file);
     }
   }
   input.click();
 }
-document.getElementById('saveBtn').onclick = () => {
-  if(selectedBubble){
-    if(selectedBubble.dataset.image){
-      const a = document.createElement('a');
-      a.href = selectedBubble.dataset.image;
-      a.download = `AI-Tracker-Image-${Date.now()}.png`;
-      a.click();
-      showToast('Gambar disimpan!');
-    } else {
-      const text = selectedBubble.dataset.text || selectedBubble.innerText;
-      navigator.clipboard.writeText(text);
-      showToast('Teks disalin!');
-    }
-    chatMenu.style.display = 'none';
+
+// MIC
+micBtn.onclick = () => {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SpeechRecognition) return showToast('Browser tidak support voice');
+  const rec = new SpeechRecognition();
+  rec.lang = 'id-ID';
+  rec.onstart = () => micBtn.classList.add('recording');
+  rec.onend = () => micBtn.classList.remove('recording');
+  rec.onresult = e => {
+    promptInput.value = e.results[0][0].transcript;
+    sendMessage();
   }
+  rec.start();
 }
+
+// SEND
+sendBtn.onclick = sendMessage;
+promptInput.onkeypress = e => { if(e.key==='Enter'){sendMessage(); promptInput.placeholder = "Message AI Tracker"} };
 document.getElementById('deleteBtn').onclick = () => {
   if(selectedBubble){
     selectedBubble.closest('.chat-row').remove();
